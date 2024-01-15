@@ -1,5 +1,18 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="wrapper">
+    <h1>ViewResume</h1>
   </div>
 </template>
+
+<script>
+  export default {
+    name: 'ViewResume',
+    data() {
+      return {
+      };
+    },
+  }
+</script>
+
+<style scoped>
+</style>
