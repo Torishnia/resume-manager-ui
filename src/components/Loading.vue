@@ -12,7 +12,7 @@
 
 <style scoped>
   .spinner {
-    margin: 0 auto;
+    margin: 250px auto;
     width: 100px;
   }
 
