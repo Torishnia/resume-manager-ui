@@ -17,24 +17,16 @@
         <span v-else-if="!isDesktop">Create</span>
         <span v-else>Create Resume</span>
       </router-link>
-      <router-link to="/view">
-        <font-awesome-icon
-          :icon="['fas', 'eye']"
-          v-if="isMobile"
-        />
-        <span v-else-if="!isDesktop">View</span>
-        <span v-else>View Resume</span>
-      </router-link>
     </nav>
   </div>
 </template>
 
 <script>
   import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faHome, faCirclePlus, faEye } from '@fortawesome/free-solid-svg-icons'
+  import { faHome, faCirclePlus } from '@fortawesome/free-solid-svg-icons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-  library.add(faHome, faCirclePlus, faEye);
+  library.add(faHome, faCirclePlus);
 
   export default {
   components: {

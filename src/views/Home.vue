@@ -1,12 +1,22 @@
 <template>
   <div class="home">
+    <ResumesList />
   </div>
 </template>
 
 <script>
-export default {
-  name: 'HomeView',
-  components: {
+  import ResumesList from '@/components/ResumesList.vue';
+
+  export default {
+    name: 'HomeView',
+    components: {
+      ResumesList
+    },
   }
-}
 </script>
+
+<style scoped>
+  .home {
+    padding: 0 15px;
+  }
+</style>

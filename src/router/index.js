@@ -13,7 +13,7 @@ const routes = [
     component: () => import('../views/CreateResume.vue')
   },
   {
-    path: '/view',
+    path: '/view/:id',
     name: 'view',
     component: () => import('../views/ViewResume.vue')
   }

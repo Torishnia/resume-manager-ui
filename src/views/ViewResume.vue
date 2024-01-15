@@ -11,6 +11,9 @@
       return {
       };
     },
+    mounted() {
+      const resumeId = this.$route.params.id;
+    },
   }
 </script>
 
