@@ -98,7 +98,6 @@
     components: { ContactInfo },
     methods: {
       handleContactData(data) {
-        console.log('Data', data);
         this.contact = data;
       },
       async createResume() {
@@ -116,7 +115,7 @@
                 positionTitle: this.position,
                 positionDescription: this.description,
                 interests: this.interests,
-                contact: this.contactInfo,
+                contact: this.contact,
               })
           });
           if (!response.ok) throw new Error('Error creating resume');
@@ -176,4 +175,16 @@
     color: #2e3c51;
   }
 
+  @media screen and (min-width: 426px) {
+    .container {
+      margin: 0 auto;
+      width: 340px;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .container {
+      width: 600px;
+    }
+  }
 </style>

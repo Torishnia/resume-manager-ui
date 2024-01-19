@@ -6,51 +6,51 @@
     </button>
     <div v-if="showInfo">
       <div class="contact-info">
-        <label for="phone">Phone</label>
+        <label for="phone">Phone*</label>
         <input
           type="text"
           name="phone"
-          v-model="phone"
+          v-model="contact.phone"
           maxlength="12"
           @input="contactData"
         />
       </div>
       <div class="contact-info">
-        <label for="email">Email</label>
+        <label for="email">Email*</label>
         <input
           type="text"
           name="email"
-          v-model="email"
+          v-model="contact.email"
           maxlength="64"
           @input="contactData"
         />
       </div>
       <div class="contact-info">
-        <label for="linkedIn">LinkedIn</label>
+        <label for="linkedIn">LinkedIn*</label>
         <input
           type="text"
           name="linkedIn"
-          v-model="linkedInURL"
+          v-model="contact.linkedInURL"
           maxlength="128"
           @input="contactData"
         />
       </div>
       <div class="contact-info">
-        <label for="telegram">Telegram</label>
+        <label for="telegram">Telegram*</label>
         <input
           type="text"
           name="telegram"
-          v-model="telegramURL"
+          v-model="contact.telegramURL"
           maxlength="128"
           @input="contactData"
         />
       </div>
       <div class="contact-info">
-        <label for="gitHub">GitHub</label>
+        <label for="gitHub">GitHub*</label>
         <input
           type="text"
           name="gitHub"
-          v-model="gitHubURL"
+          v-model="contact.gitHubURL"
           maxlength="128"
           @input="contactData"
         />
@@ -64,27 +64,21 @@
     data() {
       return {
         showInfo: false,
-        phone: '',
-        email: '',
-        linkedInURL: '',
-        telegramURL: '',
-        gitHubURL: '',
+        contact: {
+          phone: '',
+          email: '',
+          linkedInURL: '',
+          telegramURL: '',
+          gitHubURL: '',
+        }
       };
     },
     methods: {
       toggleInfo() {
-        console.log(this.showInfo);
         this.showInfo = !this.showInfo;
       },
       contactData() {
-        console.log('contactData');
-        this.$emit('contact-data', {
-          phone: this.phone,
-          email: this.email,
-          linkedInURL: this.linkedInURL,
-          telegramURL: this.telegramURL,
-          gitHubURL: this.gitHubURL,
-        })
+        this.$emit('contact-data', { ...this.contact });
       }
     }
   }
@@ -97,11 +91,16 @@
   }
 
   .btn-details {
+    display: flex;
     font-size: 18px;
     font-weight: 500;
     color: #2e3c51;
     border: none;
     cursor: pointer;
+  }
+
+  .btn-details span {
+    margin-left: 5px;
   }
 
   .contact-info {
