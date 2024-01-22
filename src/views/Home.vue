@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import ResumesList from '@/components/ResumesList.vue';
+  import ResumesList from '@/views/ResumesList.vue';
 
   export default {
     name: 'HomeView',
