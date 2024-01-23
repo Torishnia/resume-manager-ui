@@ -29,6 +29,7 @@
   library.add(faHome, faCirclePlus);
 
   export default {
+  name: 'AppHeader',
   components: {
     FontAwesomeIcon,
   },
@@ -44,7 +45,7 @@
     window.addEventListener('resize', this.updateIsMobile);
     window.addEventListener('resize', this.updateIsDesktop);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.updateIsMobile);
     window.removeEventListener('resize', this.updateIsDesktop);
   },
