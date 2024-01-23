@@ -3,7 +3,7 @@
     <ul>
       <li
         v-for="resume in resumes"
-        key="resume.id"
+        :key="resume.id"
         class="resume"
         @click="() => viewResume(resume.id)"
       >
@@ -16,7 +16,7 @@
         </div>
         <div class="resume-position">{{ resume.positionTitle }}</div>
       </li>
-      <Loading :loading="loading" />
+      <LoadingSpinner :loading="loading" />
       <li v-if="!loading && resumes.length === 0" class="no-data">No resumes available.</li>
     </ul>
   </div>
@@ -27,7 +27,7 @@
   import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-  import Loading from '@/components/Loading.vue';
+  import LoadingSpinner from '@/components/LoadingSpinner.vue';
 
   library.add(faCircleUser);
 
@@ -41,7 +41,7 @@
     },
     components: {
       FontAwesomeIcon,
-      Loading,
+      LoadingSpinner,
     },
     methods: {
       formattedDate(dateString) {
