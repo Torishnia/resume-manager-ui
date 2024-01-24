@@ -20,22 +20,34 @@
       v-model="interests"
     />
 
-    <ContactInfo @contact-data="handleContactData" />
+    <ContentWrapper title="Contacts">
+      <CustomInput 
+        v-for="(input, index) in contactData"
+        :key="index"
+        :inputId="input.inputId"
+        :inputType="input.inputType"
+        :inputLabel="input.inputLabel"
+        :inputName="input.inputName"
+        :inputLength="input.inputLength"
+        v-model="contact[input.inputName]"
+      />
+    </ContentWrapper>
     <button type="submit" class="btn-create">Create</button>
   </form>
 </template>
 
 <script>
-  import ContactInfo from '@/components/ContactInfo.vue';
+  import ContentWrapper from '@/components/ContentWrapper.vue';
   import CustomInput from '@/components/CustomInput.vue';
   import CustomTextarea from '@/components/CustomTextarea.vue';
-  import { mainData } from '@/mockData';
+  import { contactData, mainData } from '@/mockData';
 
   export default {
     name: 'CreateResume',
     data() {
       return {
         mainData,
+        contactData,
         interests: '',
         contact: {
           phone: '',
@@ -46,7 +58,11 @@
         }
       };
     },
-    components: { ContactInfo, CustomInput, CustomTextarea },
+    components: {
+      ContentWrapper,
+      CustomInput,
+      CustomTextarea
+    },
     computed: {
       resumeData() {
         return this.mainData.reduce((acc, item) => {
@@ -56,9 +72,6 @@
       },
     },
     methods: {
-      handleContactData(data) {
-        this.contact = data;
-      },
       async createResume() {
         const ageField = this.mainData.find((input) => input.inputName === 'age');
         if (ageField) ageField.value = Number(ageField.value);
