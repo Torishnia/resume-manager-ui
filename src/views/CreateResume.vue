@@ -21,7 +21,7 @@
     />
 
     <ContactInfo @contact-data="handleContactData" />
-    <button type="submit">Create</button>
+    <button type="submit" class="btn-create">Create</button>
   </form>
 </template>
 
@@ -109,6 +109,24 @@
     border: 1px solid red;
   }
 
+  .btn-create {
+    width: 100%;
+    height: 35px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    color: #f4f2e7;
+    background: #b47f55;
+    border: 2px solid #b47f55;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .btn-create:hover {
+    color: #2e3c51;
+    background: none;
+  }
+
   @media screen and (min-width: 426px) {
     .container {
       margin: 0 auto;
@@ -119,6 +137,10 @@
   @media screen and (min-width: 768px) {
     .container {
       width: 600px;
+    }
+
+    .btn-create {
+      width: 120px;
     }
   }
 </style>
