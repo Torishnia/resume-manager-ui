@@ -8,11 +8,7 @@
   export default {
     name: 'ViewResume',
     data() {
-      return {
-      };
-    },
-    mounted() {
-      const resumeId = this.$route.params.id;
+      return {};
     },
   }
 </script>
