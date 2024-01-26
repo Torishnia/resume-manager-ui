@@ -16,15 +16,17 @@
 <script>
   export default {
     name: 'CustomInput',
-    props: [
-      'inputId',
-      'inputLabel',
-      'inputType',
-      'inputName',
-      'inputRequire',
-      'inputLength',
-      'modelValue',
-    ],
+    props: {
+      inputId: String,
+      inputLabel: String,
+      inputType: String,
+      inputName: String,
+      inputRequire: Boolean,
+      inputLength: Number,
+      modelValue: {
+        type: [String, Number],
+      },
+    },
   }
 </script>
 
