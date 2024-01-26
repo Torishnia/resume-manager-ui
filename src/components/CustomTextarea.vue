@@ -15,14 +15,14 @@
 <script>
   export default {
     name: 'CustomTextarea',
-    props: [
-      'textareaId',
-      'textareaLabel',
-      'textareaName',
-      'textareaRequire',
-      'textareaLength',
-      'modelValue',
-    ],
+    props: {
+      textareaId: String,
+      textareaLabel: String,
+      textareaName: String,
+      textareaRequire: Boolean,
+      textareaLength: Number,
+      modelValue: String,
+    },
   }
 </script>
 

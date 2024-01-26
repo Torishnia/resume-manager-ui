@@ -16,7 +16,7 @@
       textareaId="interests"
       textareaLabel="Interests"
       textareaName="interests"
-      textareaLength="500"
+      :textareaLength=500
       v-model="interests"
     />
 
