@@ -2,6 +2,7 @@
   <div class="input-block">
     <label :for=inputId>{{inputLabel}}</label>
     <input
+      :class="{'input-error': !isValid}"
       :id=inputId
       :type=inputType
       :name=inputName
@@ -10,6 +11,7 @@
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
     />
+    <p v-if="!isValid" class="error-text">{{ validationErrorMessage }}</p>
   </div>
 </template>
 
@@ -23,6 +25,11 @@
       inputName: String,
       inputRequire: Boolean,
       inputLength: Number,
+      validationErrorMessage: String,
+      isValid: {
+        type: Boolean,
+        default: true,
+      },
       modelValue: {
         type: [String, Number],
       },
@@ -51,5 +58,20 @@
     border: 1px solid #2e3c51;
     border-radius: 10px;
     color: #2e3c51;
+  }
+  .input-error {
+    border-color: #be1313;
+  }
+
+  .error-text {
+    margin-top: 10px;
+    color: #be1313;
+    font-size: 14px;
+  }
+
+  @media screen and (min-width: 426px) {
+    .error-text {
+      font-size: 16px;
+    }
   }
 </style>
