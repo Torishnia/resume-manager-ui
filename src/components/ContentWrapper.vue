@@ -2,7 +2,7 @@
   <div class="wrapper">
     <button @click="toggleInfo" type="button" class="btn-details">
       {{ title }}
-      <span>&#9650;</span>
+      <span :class="{'rotate': showInfo}">&#9650;</span>
     </button>
     <slot v-if="showInfo"></slot>
   </div>
@@ -42,5 +42,10 @@
 
   .btn-details span {
     margin-left: 5px;
+    transition: transform 0.3s ease;
+  }
+
+  .rotate {
+    transform: rotate(180deg);
   }
 </style>
