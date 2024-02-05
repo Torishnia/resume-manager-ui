@@ -36,15 +36,46 @@
         :validationErrorMessage="input.validation.errorMessage"
       />
     </ContentWrapper>
+
+    <ContentWrapper title="Skills">
+      <CustomInput
+        inputId="skills"
+        inputType="text"
+        inputName="skills"
+        inputPlaceholder="Add tag and press Enter"
+        :inputLength=64
+        v-model="newSkill"
+        @keydown.enter.prevent="addSkill"
+      />
+      <span
+        class="tag"
+        v-for="(skill, index) in skills"
+        :key="index"
+      >
+        {{ skill }}
+        <font-awesome-icon 
+          class="icon-remove"
+          :icon="['fas', 'circle-xmark']"
+          @click="removeSkill(index)"
+        />
+      </span>
+    </ContentWrapper>
+
     <button type="submit" class="btn-create">Create</button>
   </form>
 </template>
 
 <script>
+  import { library } from '@fortawesome/fontawesome-svg-core';
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+  import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+
   import ContentWrapper from '@/components/ContentWrapper.vue';
   import CustomInput from '@/components/CustomInput.vue';
   import CustomTextarea from '@/components/CustomTextarea.vue';
   import { contactData, mainData } from '@/mockData';
+
+  library.add(faCircleXmark);
 
   export default {
     name: 'CreateResume',
@@ -59,23 +90,39 @@
           linkedInURL: '',
           telegramURL: '',
           gitHubURL: '',
-        }
+        },
+        skills: [],
+        newSkill: '',
       };
     },
     components: {
       ContentWrapper,
       CustomInput,
-      CustomTextarea
+      CustomTextarea,
+      FontAwesomeIcon,
     },
     computed: {
       resumeData() {
         return this.mainData.reduce((acc, item) => {
           acc[item.inputName] = item.value;
           return acc;
-        }, { interests: this.interests, contact: this.contact });
+        }, {
+          interests: this.interests,
+          contact: this.contact,
+          skills: this.skills 
+        });
       },
     },
     methods: {
+      addSkill() {
+        if (this.newSkill.trim() !== '') {
+          this.skills.push(this.newSkill.trim());
+          this.newSkill = '';
+        }
+      },
+      removeSkill(index) {
+        this.skills.splice(index, 1);
+      },
       async onSubmit() {
         if (this.isFormValid()) {
           try {
@@ -116,6 +163,7 @@
           telegramURL: '',
           gitHubURL: '',
         };
+        this.skills = [];
       },
       isFormValid() {
         // Check if valid mainData
@@ -230,6 +278,29 @@
     border: 1px solid red;
   }
 
+  .tag {
+    margin-top: 10px;
+    margin-right: 5px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #f4f2e7;
+    background-color: #2e3c51;
+  }
+
+  .icon-remove {
+    margin-left: 8px;
+    cursor: pointer;
+    color: #f4f2e7;
+    transition: .2s ease-out;
+  }
+
+  .icon-remove:hover {
+    color: #b47f55;
+  }
+
   .btn-create {
     width: 100%;
     height: 35px;
@@ -258,6 +329,10 @@
   @media screen and (min-width: 768px) {
     .container {
       width: 600px;
+    }
+
+    .tag {
+      font-size: 18px;
     }
 
     .btn-create {
