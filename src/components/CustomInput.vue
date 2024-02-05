@@ -6,6 +6,7 @@
       :id=inputId
       :type=inputType
       :name=inputName
+      :placeholder=inputPlaceholder
       :required=inputRequire
       :maxlength=inputLength
       :value="modelValue"
@@ -23,6 +24,7 @@
       inputLabel: String,
       inputType: String,
       inputName: String,
+      inputPlaceholder: String,
       inputRequire: Boolean,
       inputLength: Number,
       validationErrorMessage: String,
