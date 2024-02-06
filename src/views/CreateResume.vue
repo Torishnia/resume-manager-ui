@@ -10,8 +10,8 @@
       :inputLength="input.inputLength"
       :inputRequire="input.inputRequire"
       v-model="input.value"
-      :isValid="input.validation.isValid"
-      :validationErrorMessage="input.validation.errorMessage"
+      :isValid="isButtonTouched ? input.validation.isValid : true"
+      :validationErrorMessage="isButtonTouched ? input.validation.errorMessage : ''"
     />
 
     <CustomTextarea
@@ -32,8 +32,8 @@
         :inputName="input.inputName"
         :inputLength="input.inputLength"
         v-model="contact[input.inputName]"
-        :isValid="input.validation.isValid"
-        :validationErrorMessage="input.validation.errorMessage"
+        :isValid="isButtonTouched ? input.validation.isValid : true"
+        :validationErrorMessage="isButtonTouched ? input.validation.errorMessage : ''"
       />
     </ContentWrapper>
 
@@ -61,7 +61,11 @@
       </span>
     </ContentWrapper>
 
-    <button type="submit" class="btn-create">Create</button>
+    <button
+      type="submit"
+      :class="{'btn-create-disabled': !isFormValid, 'btn-create': true}"
+      :disabled="!isFormValid"
+    >Create</button>
   </form>
 </template>
 
@@ -93,6 +97,7 @@
         },
         skills: [],
         newSkill: '',
+        isButtonTouched: false,
       };
     },
     components: {
@@ -112,60 +117,11 @@
           skills: this.skills 
         });
       },
-    },
-    methods: {
-      addSkill() {
-        if (this.newSkill.trim() !== '') {
-          this.skills.push(this.newSkill.trim());
-          this.newSkill = '';
-        }
-      },
-      removeSkill(index) {
-        this.skills.splice(index, 1);
-      },
-      async onSubmit() {
-        if (this.isFormValid()) {
-          try {
-            await this.createResume();
-            this.clearForm();
-          } catch (err) {
-            console.error('Error creating resume:', err);
-          }
-        }
-      },
-      async createResume() {
-        const ageField = this.mainData.find((input) => input.inputName === 'age');
-        if (ageField) ageField.value = Number(ageField.value);
-
-        try {
-          const response = await fetch('https://resume-manager-api-git-main-torishnia.vercel.app/resumes/create', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(this.resumeData),
-          });
-
-          if (!response.ok) throw new Error('Error creating resume');
-          console.log('Resume created successfully');
-        }
-        catch (err) {
-          console.error('Error creating resume:', err);
-        }
-      },
-      clearForm() {
-        this.mainData.forEach(item => item.value = '');
-        this.interests = '';
-        this.contact = {
-          phone: '',
-          email: '',
-          linkedInURL: '',
-          telegramURL: '',
-          gitHubURL: '',
-        };
-        this.skills = [];
-      },
       isFormValid() {
+        if (!this.isButtonTouched) {
+          return true;
+        }
+
         // Check if valid mainData
         let isMainDataValid = true;
 
@@ -208,6 +164,61 @@
 
         return (isMainDataValid && isContactDataValid);
       },
+    },
+    methods: {
+      addSkill() {
+        if (this.newSkill.trim() !== '') {
+          this.skills.push(this.newSkill.trim());
+          this.newSkill = '';
+        }
+      },
+      removeSkill(index) {
+        this.skills.splice(index, 1);
+      },
+      async onSubmit() {
+        this.isButtonTouched = true;
+        if (this.isFormValid) {
+          try {
+            await this.createResume();
+            this.clearForm();
+            this.isButtonTouched = false;
+          } catch (err) {
+            console.error('Error creating resume:', err);
+          }
+        }
+      },
+      async createResume() {
+        const ageField = this.mainData.find((input) => input.inputName === 'age');
+        if (ageField) ageField.value = Number(ageField.value);
+
+        try {
+          const response = await fetch('https://resume-manager-api-git-main-torishnia.vercel.app/resumes/create', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(this.resumeData),
+          });
+
+          if (!response.ok) throw new Error('Error creating resume');
+          console.log('Resume created successfully');
+        }
+        catch (err) {
+          console.error('Error creating resume:', err);
+        }
+      },
+      clearForm() {
+        this.mainData.forEach(item => item.value = '');
+        this.interests = '';
+        this.contact = {
+          phone: '',
+          email: '',
+          linkedInURL: '',
+          telegramURL: '',
+          gitHubURL: '',
+        };
+        this.skills = [];
+      },
       setValidationState(input, isValid, errorMessage = '') {
         input.validation.isValid = isValid;
         input.validation.errorMessage = isValid ? '' : errorMessage;
@@ -227,7 +238,7 @@
         return this.setValidationState(
           input,
           isValid,
-          'Please enter a valid age (18-100)'
+          'Please enter a valid age (18-99)'
         );
       },
       validateInputWithRegex(input, value, regex, errorMessage) {
@@ -317,6 +328,17 @@
   .btn-create:hover {
     color: #2e3c51;
     background: none;
+  }
+
+  .btn-create-disabled {
+    background: #cccccc;
+    border-color: #cccccc;
+    cursor: not-allowed;
+  }
+
+  .btn-create-disabled:hover {
+    color: #f4f2e7;
+    background: #cccccc;
   }
 
   @media screen and (min-width: 426px) {
