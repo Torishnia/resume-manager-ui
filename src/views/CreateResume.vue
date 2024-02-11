@@ -56,9 +56,51 @@
         <font-awesome-icon 
           class="icon-remove"
           :icon="['fas', 'circle-xmark']"
-          @click="removeSkill(index)"
+          @click="removeItem('skills', index)"
         />
       </span>
+    </ContentWrapper>
+
+    <ContentWrapper title="Experience">
+      <CustomInput
+        v-for="(input, index) in experienceData"
+        :key="index"
+        :inputId="input.inputId"
+        :inputType="input.inputType"
+        :inputLabel="input.inputLabel"
+        :inputName="input.inputName"
+        :inputLength="input.inputLength"
+        v-model="input.value"
+        :isValid="isButtonTouched ? input.validation.isValid : true"
+        :validationErrorMessage="isButtonTouched ? input.validation.errorMessage : ''"
+      />
+
+      <CustomTextarea 
+        textareaId="companyDescription"
+        textareaLabel="Description"
+        textareaName="companyDescription"
+        :textareaLength=500
+        v-model="companyDescription"
+      />
+      <button type="button" class="btn-add" @click="addExperience">Add Experience</button>
+
+      <div class="experience-card" v-for="(experience, index) in experiences" :key="index">
+        <font-awesome-icon 
+          class="icon-remove remove-card"
+          :icon="['fas', 'circle-xmark']"
+          @click="removeItem('experiences', index)"
+        />
+        <h2 style="color: #b2a89b;">{{ experience.companyName }}</h2>
+        <h3>{{ experience.companyPosition }}</h3>
+        <p><strong>{{ experience.companyStack }}</strong></p>
+        <p style="color: #b47f55;" v-if="experience.startDate || experience.endDate">
+          <strong>
+            {{ experience.startDate }} &#8212;
+            {{ experience.endDate ? experience.endDate : 'until now' }}
+          </strong>
+        </p>
+        <p style="color: #a2a2a2;"><strong>{{ experience.companyDescription }}</strong></p>
+      </div>
     </ContentWrapper>
 
     <button
@@ -77,9 +119,18 @@
   import ContentWrapper from '@/components/ContentWrapper.vue';
   import CustomInput from '@/components/CustomInput.vue';
   import CustomTextarea from '@/components/CustomTextarea.vue';
-  import { contactData, mainData } from '@/mockData';
+  import { contactData, experienceData, mainData } from '@/mockData';
 
   library.add(faCircleXmark);
+
+  const VALIDATION_TYPE = {
+    REQUIRED: 'required',
+    EMPTY: 'empty',
+    AGE: 'age',
+    PHONE: 'phone',
+    EMAIL: 'email',
+    URL: 'url',
+  }
 
   export default {
     name: 'CreateResume',
@@ -87,7 +138,9 @@
       return {
         mainData,
         contactData,
+        experienceData,
         interests: '',
+        companyDescription: '',
         contact: {
           phone: '',
           email: '',
@@ -97,6 +150,7 @@
         },
         skills: [],
         newSkill: '',
+        experiences: [],
         isButtonTouched: false,
       };
     },
@@ -108,14 +162,18 @@
     },
     computed: {
       resumeData() {
-        return this.mainData.reduce((acc, item) => {
+        const mainDataAccumulated = this.mainData.reduce((acc, item) => {
           acc[item.inputName] = item.value;
           return acc;
-        }, {
+        }, {});
+
+        return {
+          ...mainDataAccumulated,
           interests: this.interests,
           contact: this.contact,
-          skills: this.skills 
-        });
+          skills: this.skills,
+          experiences: this.experiences,
+        };
       },
       isFormValid() {
         if (!this.isButtonTouched) {
@@ -126,14 +184,14 @@
         let isMainDataValid = true;
 
         for (const input of this.mainData) {
-          if (input.inputName === 'age') {
-            this.validationAgeInput(input);
+          if (input.inputName === VALIDATION_TYPE.AGE) {
+            this.validationInput(input, input.value, VALIDATION_TYPE.AGE);
           } else if (input.inputName === 'positionDescription') {
             if (input.value === '') {
               input.validation.isValid = true;
             }
           } else {
-            this.validationRequiredInput(input);
+            this.validationInput(input, input.value, VALIDATION_TYPE.REQUIRED);
           }
 
           if (!input.validation.isValid) {
@@ -145,24 +203,40 @@
         let isContactDataValid = true;
 
         const validationMapping = {
-          'phone': this.validationPhoneInput,
-          'email': this.validationEmailInput,
-          'linkedInURL': this.validationUrlInput,
-          'telegramURL': this.validationUrlInput,
-          'gitHubURL': this.validationUrlInput
+          'phone': { method: this.validationInput, type: VALIDATION_TYPE.PHONE },
+          'email': { method: this.validationInput, type: VALIDATION_TYPE.EMAIL },
+          'linkedInURL': { method: this.validationInput, type: VALIDATION_TYPE.URL },
+          'telegramURL': { method: this.validationInput, type: VALIDATION_TYPE.URL },
+          'gitHubURL': { method: this.validationInput, type: VALIDATION_TYPE.URL }
         };
 
         for (const input of this.contactData) {
           const value = this.contact[input.inputName];
           if (value !== '') {
-            const isValid = validationMapping[input.inputName]?.(input, value);
+            const validation = validationMapping[input.inputName];
+            const isValid = validation.method(input, value, validation.type);
             if (!isValid) {
               isContactDataValid = false;
             }
           }
         }
 
-        return (isMainDataValid && isContactDataValid);
+        // Check if valid experienceData
+        let isExperienceDataValid = true;
+
+        for (const input of this.experienceData) {
+          if (input.value === '') {
+            this.validationInput(input, input.value, VALIDATION_TYPE.EMPTY);
+          }
+          
+          if (!input.validation.isValid) isExperienceDataValid = false;
+        }
+
+        return (
+          isMainDataValid &&
+          isContactDataValid &&
+          isExperienceDataValid
+        );
       },
     },
     methods: {
@@ -172,8 +246,30 @@
           this.newSkill = '';
         }
       },
-      removeSkill(index) {
-        this.skills.splice(index, 1);
+      addExperience() {
+        const newExperience = {};
+        let fieldFilled = false;
+
+        this.experienceData.forEach(input => {
+          if (input.value.trim()) {
+            newExperience[input.inputName] = input.value.trim();
+            fieldFilled = true;
+          }
+        });
+
+        if (this.companyDescription.trim()) {
+          newExperience.companyDescription = this.companyDescription.trim();
+          fieldFilled = true;
+        }
+
+        if (fieldFilled) {
+          this.experiences.push(newExperience);
+          this.experienceData.forEach(input => input.value = '');
+          this.companyDescription = '';
+        }
+      },
+      removeItem(arrayName, index) {
+        this[arrayName].splice(index, 1);
       },
       async onSubmit() {
         this.isButtonTouched = true;
@@ -218,28 +314,13 @@
           gitHubURL: '',
         };
         this.skills = [];
+        this.experienceData.forEach(item => item.value = '');
+        this.experiences = [];
       },
       setValidationState(input, isValid, errorMessage = '') {
         input.validation.isValid = isValid;
         input.validation.errorMessage = isValid ? '' : errorMessage;
         return isValid;
-      },
-      validationRequiredInput(input) {
-        const fieldValue = input.value?.trim() ?? '';
-        return this.setValidationState(
-          input,
-          fieldValue !== '',
-          `Please enter a valid ${input.inputLabel}`
-        );
-      },
-      validationAgeInput(input) {
-        const ageValue = Number(input.value);
-        const isValid = ageValue >= 18 && ageValue <= 99;
-        return this.setValidationState(
-          input,
-          isValid,
-          'Please enter a valid age (18-99)'
-        );
       },
       validateInputWithRegex(input, value, regex, errorMessage) {
         if (!regex.test(value)) {
@@ -251,33 +332,51 @@
         }
         return input.validation.isValid;
       },
-      validationPhoneInput(input, value) {
-        const phoneRegex = /^380\d{9}$/;
-        return this.validateInputWithRegex(
-          input,
-          value,
-          phoneRegex,
-          'Please enter a valid phone number (380*********)'
-        );
+      validationInput(input, value = input.value, validationType) {
+        switch(validationType) {
+          case VALIDATION_TYPE.REQUIRED:
+            return this.setValidationState(
+              input,
+              value.trim() !== '',
+              `Please enter a valid ${input.inputLabel}`
+            );
+          case VALIDATION_TYPE.EMPTY:
+            return this.setValidationState(
+              input,
+              value.trim() === '',
+              `Please enter a valid ${input.inputLabel}`
+            );
+          case VALIDATION_TYPE.AGE:
+            return this.setValidationState(
+              input,
+              value >= 18 && value <= 99,
+              'Please enter a valid age (18-99)'
+            );
+          case VALIDATION_TYPE.PHONE:
+            return this.validateInputWithRegex(
+              input,
+              value,
+              /^380\d{9}$/,
+              'Please enter a valid phone number (380*********)'
+            );
+          case VALIDATION_TYPE.EMAIL:
+            return this.validateInputWithRegex(
+              input,
+              value,
+              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              'Please enter a valid email'
+            );
+          case VALIDATION_TYPE.URL:
+            return this.validateInputWithRegex(
+              input,
+              value,
+              /^(ftp|http|https):\/\/[^ "]+$/,
+              'Please enter a valid url'
+            );
+          default:
+            return true;
+        }
       },
-      validationEmailInput(input, value) {
-        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return this.validateInputWithRegex(
-          input,
-          value,
-          emailRegex,
-          'Please enter a valid email'
-        );
-      },
-      validationUrlInput(input, value) {
-        const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
-        return this.validateInputWithRegex(
-          input,
-          value,
-          urlRegex,
-          'Please enter a valid url'
-        );
-      }
   },
 }
 
@@ -310,6 +409,46 @@
 
   .icon-remove:hover {
     color: #b47f55;
+  }
+
+  .btn-add {
+    margin-top: 14px;
+    padding: 5px;
+    height: 30px;
+    width: 120px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 2px solid #2e3c51;
+    background: #2e3c51;
+    color: white;
+    cursor: pointer;
+  }
+
+  .btn-add:hover {
+    background: none;
+    color: #2e3c51;
+  }
+
+  .experience-card {
+    position: relative;
+    margin: 20px auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    color: #f4f2e7;
+    background: #2e3c51;
+    border: 1px solid #2e3c51;
+    border-radius: 10px;
+  }
+
+  p {
+    margin-bottom: 8px;
+  }
+
+  .remove-card {
+    position: absolute;
+    right: 10px;
+    top: 8px;
   }
 
   .btn-create {

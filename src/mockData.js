@@ -134,3 +134,64 @@ export const contactData = [
     },
   },
 ];
+
+export const experienceData = [
+  {
+    inputId: 'companyName',
+    inputType: 'text',
+    inputLabel: 'Company Name',
+    inputName: 'companyName',
+    inputLength: 64,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'companyPosition',
+    inputType: 'text',
+    inputLabel: 'Position',
+    inputName: 'companyPosition',
+    inputLength: 128,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'companyStack',
+    inputType: 'text',
+    inputLabel: 'Stack',
+    inputName: 'companyStack',
+    inputLength: 128,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'startDate',
+    inputType: 'date',
+    inputLabel: 'Start Date',
+    inputName: 'startDate',
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'endDate',
+    inputType: 'date',
+    inputLabel: 'End Date',
+    inputName: 'endDate',
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+]
