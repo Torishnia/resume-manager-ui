@@ -82,7 +82,8 @@
         :textareaLength=500
         v-model="companyDescription"
       />
-      <button type="button" class="btn-add" @click="addExperience">Add Experience</button>
+
+      <CustomButton title="Add Experience" @click="addExperience" />
 
       <div class="experience-card" v-for="(experience, index) in experiences" :key="index">
         <font-awesome-icon 
@@ -119,6 +120,7 @@
   import ContentWrapper from '@/components/ContentWrapper.vue';
   import CustomInput from '@/components/CustomInput.vue';
   import CustomTextarea from '@/components/CustomTextarea.vue';
+  import CustomButton from '@/components/CustomButton.vue';
   import { contactData, experienceData, mainData } from '@/mockData';
 
   library.add(faCircleXmark);
@@ -158,6 +160,7 @@
       ContentWrapper,
       CustomInput,
       CustomTextarea,
+      CustomButton,
       FontAwesomeIcon,
     },
     computed: {
@@ -409,24 +412,6 @@
 
   .icon-remove:hover {
     color: #b47f55;
-  }
-
-  .btn-add {
-    margin-top: 14px;
-    padding: 5px;
-    height: 30px;
-    width: 120px;
-    font-weight: 600;
-    border-radius: 10px;
-    border: 2px solid #2e3c51;
-    background: #2e3c51;
-    color: white;
-    cursor: pointer;
-  }
-
-  .btn-add:hover {
-    background: none;
-    color: #2e3c51;
   }
 
   .experience-card {
