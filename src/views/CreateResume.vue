@@ -53,10 +53,10 @@
         :key="index"
       >
         {{ skill }}
-        <font-awesome-icon 
-          class="icon-remove"
-          :icon="['fas', 'circle-xmark']"
-          @click="removeItem('skills', index)"
+        <CustomIconRemove
+          arrayName="skills"
+          :index="index"
+          @remove="removeItem"
         />
       </span>
     </ContentWrapper>
@@ -85,23 +85,19 @@
 
       <CustomButton title="Add Experience" @click="addExperience" />
 
-      <div class="experience-card" v-for="(experience, index) in experiences" :key="index">
-        <font-awesome-icon 
-          class="icon-remove remove-card"
-          :icon="['fas', 'circle-xmark']"
-          @click="removeItem('experiences', index)"
-        />
-        <h2 style="color: #b2a89b;">{{ experience.companyName }}</h2>
-        <h3>{{ experience.companyPosition }}</h3>
-        <p><strong>{{ experience.companyStack }}</strong></p>
-        <p style="color: #b47f55;" v-if="experience.startDate || experience.endDate">
-          <strong>
-            {{ experience.startDate }} &#8212;
-            {{ experience.endDate ? experience.endDate : 'until now' }}
-          </strong>
-        </p>
-        <p style="color: #a2a2a2;"><strong>{{ experience.companyDescription }}</strong></p>
-      </div>
+      <CustomCard 
+        v-for="(experience, index) in experiences"
+        :key="index"
+        :arrayName="'experiences'"
+        :index="index"
+        :name="experience.companyName"
+        :title="experience.companyPosition"
+        :details="experience.companyStack"
+        :startDate="experience.startDate"
+        :endDate="experience.endDate"
+        :description="experience.companyDescription"
+        @remove="removeItem"
+      />
     </ContentWrapper>
 
     <button
@@ -113,17 +109,13 @@
 </template>
 
 <script>
-  import { library } from '@fortawesome/fontawesome-svg-core';
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-  import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-
   import ContentWrapper from '@/components/ContentWrapper.vue';
   import CustomInput from '@/components/CustomInput.vue';
   import CustomTextarea from '@/components/CustomTextarea.vue';
   import CustomButton from '@/components/CustomButton.vue';
+  import CustomCard from '@/components/CustomCard.vue';
+  import CustomIconRemove from '@/components/CustomIconRemove.vue';
   import { contactData, experienceData, mainData } from '@/mockData';
-
-  library.add(faCircleXmark);
 
   const VALIDATION_TYPE = {
     REQUIRED: 'required',
@@ -161,7 +153,8 @@
       CustomInput,
       CustomTextarea,
       CustomButton,
-      FontAwesomeIcon,
+      CustomCard,
+      CustomIconRemove,
     },
     computed: {
       resumeData() {
@@ -290,13 +283,24 @@
         const ageField = this.mainData.find((input) => input.inputName === 'age');
         if (ageField) ageField.value = Number(ageField.value);
 
+        const formattedExperiences = this.experiences.map(experience => ({
+          ...experience,
+          startDate: experience.startDate ? new Date(experience.startDate).toISOString() : null,
+          endDate: experience.endDate ? new Date(experience.endDate).toISOString() : null,
+        }));
+
+        const resumeDataWithFormattedDates = {
+          ...this.resumeData,
+          experiences: formattedExperiences,
+        };
+
         try {
           const response = await fetch('https://resume-manager-api-git-main-torishnia.vercel.app/resumes/create', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify(this.resumeData),
+              body: JSON.stringify(resumeDataWithFormattedDates),
           });
 
           if (!response.ok) throw new Error('Error creating resume');
@@ -401,39 +405,6 @@
     font-size: 14px;
     color: #f4f2e7;
     background-color: #2e3c51;
-  }
-
-  .icon-remove {
-    margin-left: 8px;
-    cursor: pointer;
-    color: #f4f2e7;
-    transition: .2s ease-out;
-  }
-
-  .icon-remove:hover {
-    color: #b47f55;
-  }
-
-  .experience-card {
-    position: relative;
-    margin: 20px auto;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    color: #f4f2e7;
-    background: #2e3c51;
-    border: 1px solid #2e3c51;
-    border-radius: 10px;
-  }
-
-  p {
-    margin-bottom: 8px;
-  }
-
-  .remove-card {
-    position: absolute;
-    right: 10px;
-    top: 8px;
   }
 
   .btn-create {
