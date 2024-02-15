@@ -116,15 +116,7 @@
   import CustomCard from '@/components/CustomCard.vue';
   import CustomIconRemove from '@/components/CustomIconRemove.vue';
   import { contactData, experienceData, mainData } from '@/mockData';
-
-  const VALIDATION_TYPE = {
-    REQUIRED: 'required',
-    EMPTY: 'empty',
-    AGE: 'age',
-    PHONE: 'phone',
-    EMAIL: 'email',
-    URL: 'url',
-  }
+  import { validateInput, VALIDATION_TYPE } from '@/validation';
 
   export default {
     name: 'CreateResume',
@@ -181,13 +173,13 @@
 
         for (const input of this.mainData) {
           if (input.inputName === VALIDATION_TYPE.AGE) {
-            this.validationInput(input, input.value, VALIDATION_TYPE.AGE);
+            validateInput(input, input.value, VALIDATION_TYPE.AGE);
           } else if (input.inputName === 'positionDescription') {
             if (input.value === '') {
               input.validation.isValid = true;
             }
           } else {
-            this.validationInput(input, input.value, VALIDATION_TYPE.REQUIRED);
+            validateInput(input, input.value, VALIDATION_TYPE.REQUIRED);
           }
 
           if (!input.validation.isValid) {
@@ -199,11 +191,11 @@
         let isContactDataValid = true;
 
         const validationMapping = {
-          'phone': { method: this.validationInput, type: VALIDATION_TYPE.PHONE },
-          'email': { method: this.validationInput, type: VALIDATION_TYPE.EMAIL },
-          'linkedInURL': { method: this.validationInput, type: VALIDATION_TYPE.URL },
-          'telegramURL': { method: this.validationInput, type: VALIDATION_TYPE.URL },
-          'gitHubURL': { method: this.validationInput, type: VALIDATION_TYPE.URL }
+          'phone': { method: validateInput, type: VALIDATION_TYPE.PHONE },
+          'email': { method: validateInput, type: VALIDATION_TYPE.EMAIL },
+          'linkedInURL': { method: validateInput, type: VALIDATION_TYPE.URL },
+          'telegramURL': { method: validateInput, type: VALIDATION_TYPE.URL },
+          'gitHubURL': { method: validateInput, type: VALIDATION_TYPE.URL }
         };
 
         for (const input of this.contactData) {
@@ -222,7 +214,7 @@
 
         for (const input of this.experienceData) {
           if (input.value === '') {
-            this.validationInput(input, input.value, VALIDATION_TYPE.EMPTY);
+            validateInput(input, input.value, VALIDATION_TYPE.EMPTY);
           }
           
           if (!input.validation.isValid) isExperienceDataValid = false;
@@ -323,66 +315,6 @@
         this.skills = [];
         this.experienceData.forEach(item => item.value = '');
         this.experiences = [];
-      },
-      setValidationState(input, isValid, errorMessage = '') {
-        input.validation.isValid = isValid;
-        input.validation.errorMessage = isValid ? '' : errorMessage;
-        return isValid;
-      },
-      validateInputWithRegex(input, value, regex, errorMessage) {
-        if (!regex.test(value)) {
-          input.validation.isValid = false;
-          input.validation.errorMessage = errorMessage;
-        } else {
-          input.validation.isValid = true;
-          input.validation.errorMessage = '';
-        }
-        return input.validation.isValid;
-      },
-      validationInput(input, value = input.value, validationType) {
-        switch(validationType) {
-          case VALIDATION_TYPE.REQUIRED:
-            return this.setValidationState(
-              input,
-              value.trim() !== '',
-              `Please enter a valid ${input.inputLabel}`
-            );
-          case VALIDATION_TYPE.EMPTY:
-            return this.setValidationState(
-              input,
-              value.trim() === '',
-              `Please enter a valid ${input.inputLabel}`
-            );
-          case VALIDATION_TYPE.AGE:
-            return this.setValidationState(
-              input,
-              value >= 18 && value <= 99,
-              'Please enter a valid age (18-99)'
-            );
-          case VALIDATION_TYPE.PHONE:
-            return this.validateInputWithRegex(
-              input,
-              value,
-              /^380\d{9}$/,
-              'Please enter a valid phone number (380*********)'
-            );
-          case VALIDATION_TYPE.EMAIL:
-            return this.validateInputWithRegex(
-              input,
-              value,
-              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-              'Please enter a valid email'
-            );
-          case VALIDATION_TYPE.URL:
-            return this.validateInputWithRegex(
-              input,
-              value,
-              /^(ftp|http|https):\/\/[^ "]+$/,
-              'Please enter a valid url'
-            );
-          default:
-            return true;
-        }
       },
   },
 }
