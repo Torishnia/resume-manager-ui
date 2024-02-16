@@ -21,6 +21,22 @@ export function validateInputWithRegex(input, value, regex, errorMessage) {
   );
 }
 
+export function validateData(inputs) {
+  let isValid = true;
+
+  for (const input of inputs) {
+    if (input.value === '') {
+      validateInput(input, input.value, VALIDATION_TYPE.EMPTY);
+    }
+    
+    if (!input.validation.isValid) {
+      isValid = false;
+    }
+  }
+
+  return isValid;
+}
+
 export function validateInput(input, value = input.value, validationType) {
   switch(validationType) {
     case VALIDATION_TYPE.REQUIRED:

@@ -83,7 +83,7 @@
         v-model="companyDescription"
       />
 
-      <CustomButton title="Add Experience" @click="addExperience" />
+      <CustomButton title="Add Experience" @click="addEntry(this.experienceData, this.experiences)" />
 
       <CustomCard 
         v-for="(experience, index) in experiences"
@@ -96,6 +96,37 @@
         :startDate="experience.startDate"
         :endDate="experience.endDate"
         :description="experience.companyDescription"
+        @remove="removeItem"
+      />
+    </ContentWrapper>
+
+    <ContentWrapper title="Education">
+      <CustomInput
+        v-for="(input, index) in educationData"
+        :key="index"
+        :inputId="input.inputId"
+        :inputType="input.inputType"
+        :inputLabel="input.inputLabel"
+        :inputName="input.inputName"
+        :inputLength="input.inputLength"
+        :options="input.options"
+        v-model="input.value"
+        :isValid="isButtonTouched ? input.validation.isValid : true"
+        :validationErrorMessage="isButtonTouched ? input.validation.errorMessage : ''"
+      />
+
+      <CustomButton title="Add Education" @click="addEntry(this.educationData, this.educations)" />
+
+      <CustomCard 
+        v-for="(education, index) in educations"
+        :key="index"
+        :arrayName="'educations'"
+        :index="index"
+        :name="education.institutionName"
+        :title="education.institutionDegree"
+        :details="education.institutionFaculty"
+        :startDate="education.startDate"
+        :endDate="education.endDate"
         @remove="removeItem"
       />
     </ContentWrapper>
@@ -115,8 +146,8 @@
   import CustomButton from '@/components/CustomButton.vue';
   import CustomCard from '@/components/CustomCard.vue';
   import CustomIconRemove from '@/components/CustomIconRemove.vue';
-  import { contactData, experienceData, mainData } from '@/mockData';
-  import { validateInput, VALIDATION_TYPE } from '@/validation';
+  import { contactData, experienceData, mainData, educationData } from '@/mockData';
+  import { validateInput, validateData, VALIDATION_TYPE } from '@/validation';
 
   export default {
     name: 'CreateResume',
@@ -125,6 +156,7 @@
         mainData,
         contactData,
         experienceData,
+        educationData,
         interests: '',
         companyDescription: '',
         contact: {
@@ -137,6 +169,7 @@
         skills: [],
         newSkill: '',
         experiences: [],
+        educations: [],
         isButtonTouched: false,
       };
     },
@@ -161,6 +194,7 @@
           contact: this.contact,
           skills: this.skills,
           experiences: this.experiences,
+          educations: this.educations,
         };
       },
       isFormValid() {
@@ -210,20 +244,16 @@
         }
 
         // Check if valid experienceData
-        let isExperienceDataValid = true;
+        const isExperienceDataValid = validateData(this.experienceData);
 
-        for (const input of this.experienceData) {
-          if (input.value === '') {
-            validateInput(input, input.value, VALIDATION_TYPE.EMPTY);
-          }
-          
-          if (!input.validation.isValid) isExperienceDataValid = false;
-        }
+        // Check if valid educationData
+        const isEducationDataValid = validateData(this.educationData);
 
         return (
           isMainDataValid &&
           isContactDataValid &&
-          isExperienceDataValid
+          isExperienceDataValid &&
+          isEducationDataValid
         );
       },
     },
@@ -234,30 +264,49 @@
           this.newSkill = '';
         }
       },
-      addExperience() {
-        const newExperience = {};
+      addEntry(fieldsData, entriesArray) {
+        const newEntry = {};
         let fieldFilled = false;
 
-        this.experienceData.forEach(input => {
-          if (input.value.trim()) {
-            newExperience[input.inputName] = input.value.trim();
+        fieldsData.forEach(field => {
+          if (field.value.trim()) {
+            newEntry[field.inputName] = field.value.trim();
             fieldFilled = true;
           }
         });
 
         if (this.companyDescription.trim()) {
-          newExperience.companyDescription = this.companyDescription.trim();
+          newEntry.companyDescription = this.companyDescription.trim();
           fieldFilled = true;
         }
 
         if (fieldFilled) {
-          this.experiences.push(newExperience);
-          this.experienceData.forEach(input => input.value = '');
+          entriesArray.push(newEntry);
+          fieldsData.forEach(field => field.value = '');
           this.companyDescription = '';
         }
       },
       removeItem(arrayName, index) {
         this[arrayName].splice(index, 1);
+      },
+      formatEntries(entries) {
+        return entries.map(entry => {
+          const formattedEntry = { ...entry };
+
+          if (entry.startDate) {
+            formattedEntry.startDate = new Date(entry.startDate).toISOString();
+          } else {
+            formattedEntry.startDate = null;
+          }
+
+          if (entry.endDate) {
+            formattedEntry.endDate = new Date(entry.endDate).toISOString();
+          } else {
+            formattedEntry.endDate = null;
+          }
+
+          return formattedEntry;
+        });
       },
       async onSubmit() {
         this.isButtonTouched = true;
@@ -275,15 +324,13 @@
         const ageField = this.mainData.find((input) => input.inputName === 'age');
         if (ageField) ageField.value = Number(ageField.value);
 
-        const formattedExperiences = this.experiences.map(experience => ({
-          ...experience,
-          startDate: experience.startDate ? new Date(experience.startDate).toISOString() : null,
-          endDate: experience.endDate ? new Date(experience.endDate).toISOString() : null,
-        }));
+        const formattedExperiences = this.formatEntries(this.experiences);
+        const formattedEducations = this.formatEntries(this.educations);
 
         const resumeDataWithFormattedDates = {
           ...this.resumeData,
           experiences: formattedExperiences,
+          educations: formattedEducations
         };
 
         try {
@@ -315,6 +362,8 @@
         this.skills = [];
         this.experienceData.forEach(item => item.value = '');
         this.experiences = [];
+        this.educationData.forEach(item => item.value = '');
+        this.educations = [];
       },
   },
 }

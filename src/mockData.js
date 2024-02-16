@@ -195,3 +195,64 @@ export const experienceData = [
     },
   },
 ]
+
+export const educationData = [
+  {
+    inputId: 'institutionName',
+    inputType: 'text',
+    inputLabel: 'Institution Name',
+    inputName: 'institutionName',
+    inputLength: 128,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'institutionDegree',
+    inputType: 'select',
+    inputLabel: 'Degree',
+    inputName: 'institutionDegree',
+    options: ['BACHELOR', 'MASTER'],
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'institutionFaculty',
+    inputType: 'text',
+    inputLabel: 'Faculty',
+    inputName: 'institutionFaculty',
+    inputLength: 128,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'startDate',
+    inputType: 'date',
+    inputLabel: 'Start Date',
+    inputName: 'startDate',
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'endDate',
+    inputType: 'date',
+    inputLabel: 'End Date',
+    inputName: 'endDate',
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+]
