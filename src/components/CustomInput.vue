@@ -1,8 +1,23 @@
 <template>
   <div class="input-block">
     <label :for=inputId>{{inputLabel}}</label>
+
+    <select
+      v-if="inputType === 'select'"
+      :class="{'input-error': !isValid, 'input': true}"
+      :id="inputId"
+      :name="inputName"
+      :value="modelValue"
+      @change="handleChange"
+    >
+      <option v-for="option in options" :key="option" :value="option">
+        {{ option }}
+      </option>
+    </select>
+
     <input
-      :class="{'input-error': !isValid}"
+      v-else
+      :class="{'input-error': !isValid, 'input': true}"
       :id=inputId
       :type=inputType
       :name=inputName
@@ -10,7 +25,7 @@
       :required=inputRequire
       :maxlength=inputLength
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="handleInput"
     />
     <p v-if="!isValid" class="error-text">{{ validationErrorMessage }}</p>
   </div>
@@ -35,7 +50,19 @@
       modelValue: {
         type: [String, Number],
       },
+      options: {
+        type: Array,
+        default: () => [],
+      },
     },
+    methods: {
+      handleInput(event) {
+        this.$emit('update:modelValue', event.target.value);
+      },
+      handleChange(event) {
+        this.$emit('update:modelValue', event.target.value);
+      }
+    }
   }
 </script>
 
@@ -53,7 +80,7 @@
     color: #2e3c51;
   }
 
-  input {
+  .input {
     padding: 5px 10px;
     font-size: 16px;
     font-weight: 500;
