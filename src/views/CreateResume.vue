@@ -37,6 +37,34 @@
       />
     </ContentWrapper>
 
+    <ContentWrapper title="Language">
+      <CustomInput
+        v-for="(input, index) in languageData"
+        :key="index"
+        :inputId="input.inputId"
+        :inputType="input.inputType"
+        :inputLabel="input.inputLabel"
+        :inputName="input.inputName"
+        :inputLength="input.inputLength"
+        :options="input.options"
+        v-model="input.value"
+        :isValid="isButtonTouched ? input.validation.isValid : true"
+        :validationErrorMessage="isButtonTouched ? input.validation.errorMessage : ''"
+      />
+
+      <CustomButton title="Add Language" @click="addEntry(this.languageData, this.languages)" />
+
+      <CustomCard 
+        v-for="(language, index) in languages"
+        :key="index"
+        :arrayName="'languages'"
+        :index="index"
+        :name="language.name"
+        :details="language.level"
+        @remove="removeItem"
+      />
+    </ContentWrapper>
+
     <ContentWrapper title="Skills">
       <CustomInput
         inputId="skills"
@@ -176,7 +204,14 @@
   import CustomButton from '@/components/CustomButton.vue';
   import CustomCard from '@/components/CustomCard.vue';
   import CustomIconRemove from '@/components/CustomIconRemove.vue';
-  import { contactData, experienceData, mainData, educationData, courseData } from '@/mockData';
+  import { 
+    contactData, 
+    experienceData, 
+    mainData, 
+    educationData, 
+    courseData, 
+    languageData 
+  } from '@/mockData';
   import { validateInput, validateData, VALIDATION_TYPE } from '@/validation';
 
   export default {
@@ -188,6 +223,7 @@
         experienceData,
         educationData,
         courseData,
+        languageData,
         interests: '',
         companyDescription: '',
         contact: {
@@ -202,6 +238,7 @@
         experiences: [],
         educations: [],
         courses: [],
+        languages: [],
         isButtonTouched: false,
       };
     },
@@ -224,6 +261,7 @@
           ...mainDataAccumulated,
           interests: this.interests,
           contact: this.contact,
+          languages: this.languages,
           skills: this.skills,
           experiences: this.experiences,
           educations: this.educations,
@@ -275,6 +313,9 @@
           }
         }
 
+        // Check if valid languageData
+        const isLanguageDataValid = validateData(this.languageData);
+
         // Check if valid experienceData
         const isExperienceDataValid = validateData(this.experienceData);
 
@@ -287,6 +328,7 @@
         return (
           isMainDataValid &&
           isContactDataValid &&
+          isLanguageDataValid &&
           isExperienceDataValid &&
           isEducationDataValid &&
           isCourseDataValid
@@ -397,6 +439,8 @@
           telegramURL: '',
           gitHubURL: '',
         };
+        this.languageData.forEach(item => item.value = '');
+        this.languages = [];
         this.skills = [];
         this.experienceData.forEach(item => item.value = '');
         this.experiences = [];
@@ -413,7 +457,6 @@
 <style scoped>
   .container {
     padding: 15px;
-    border: 1px solid red;
   }
 
   .tag {
