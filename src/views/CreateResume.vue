@@ -392,6 +392,7 @@
           try {
             await this.createResume();
             this.clearForm();
+            this.$router.push({ path: '/' });
             this.isButtonTouched = false;
           } catch (err) {
             console.error('Error creating resume:', err);
