@@ -317,3 +317,36 @@ export const courseData = [
     },
   },
 ]
+
+export const languageData = [
+  {
+    inputId: 'name',
+    inputType: 'text',
+    inputLabel: 'Name',
+    inputName: 'name',
+    inputLength: 64,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'level',
+    inputType: 'select',
+    inputLabel: 'Level',
+    inputName: 'level',
+    options: [
+      'BAD',
+      'NORMAL',
+      'MIDDLE',
+      'GOOD',
+      'NATIVE'
+    ],
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+]
