@@ -256,3 +256,64 @@ export const educationData = [
     },
   },
 ]
+
+export const courseData = [
+  {
+    inputId: 'courseName',
+    inputType: 'text',
+    inputLabel: 'Course Name',
+    inputName: 'courseName',
+    inputLength: 128,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'courseAuthor',
+    inputType: 'text',
+    inputLabel: 'Author',
+    inputName: 'courseAuthor',
+    inputLength: 128,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'courseResourse',
+    inputType: 'text',
+    inputLabel: 'Resourse',
+    inputName: 'courseResourse',
+    inputLength: 128,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'startDate',
+    inputType: 'date',
+    inputLabel: 'Start Date',
+    inputName: 'startDate',
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+  {
+    inputId: 'endDate',
+    inputType: 'date',
+    inputLabel: 'End Date',
+    inputName: 'endDate',
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  },
+]
