@@ -131,6 +131,36 @@
       />
     </ContentWrapper>
 
+    <ContentWrapper title="Course">
+      <CustomInput
+        v-for="(input, index) in courseData"
+        :key="index"
+        :inputId="input.inputId"
+        :inputType="input.inputType"
+        :inputLabel="input.inputLabel"
+        :inputName="input.inputName"
+        :inputLength="input.inputLength"
+        v-model="input.value"
+        :isValid="isButtonTouched ? input.validation.isValid : true"
+        :validationErrorMessage="isButtonTouched ? input.validation.errorMessage : ''"
+      />
+
+      <CustomButton title="Add Course" @click="addEntry(this.courseData, this.courses)" />
+
+      <CustomCard 
+        v-for="(course, index) in courses"
+        :key="index"
+        :arrayName="'courses'"
+        :index="index"
+        :name="course.courseName"
+        :title="course.courseAuthor"
+        :details="course.courseResourse"
+        :startDate="course.startDate"
+        :endDate="course.endDate"
+        @remove="removeItem"
+      />
+    </ContentWrapper>
+
     <button
       type="submit"
       :class="{'btn-create-disabled': !isFormValid, 'btn-create': true}"
@@ -146,7 +176,7 @@
   import CustomButton from '@/components/CustomButton.vue';
   import CustomCard from '@/components/CustomCard.vue';
   import CustomIconRemove from '@/components/CustomIconRemove.vue';
-  import { contactData, experienceData, mainData, educationData } from '@/mockData';
+  import { contactData, experienceData, mainData, educationData, courseData } from '@/mockData';
   import { validateInput, validateData, VALIDATION_TYPE } from '@/validation';
 
   export default {
@@ -157,6 +187,7 @@
         contactData,
         experienceData,
         educationData,
+        courseData,
         interests: '',
         companyDescription: '',
         contact: {
@@ -170,6 +201,7 @@
         newSkill: '',
         experiences: [],
         educations: [],
+        courses: [],
         isButtonTouched: false,
       };
     },
@@ -249,11 +281,15 @@
         // Check if valid educationData
         const isEducationDataValid = validateData(this.educationData);
 
+        // Check if valid courseData
+        const isCourseDataValid = validateData(this.courseData);
+
         return (
           isMainDataValid &&
           isContactDataValid &&
           isExperienceDataValid &&
-          isEducationDataValid
+          isEducationDataValid &&
+          isCourseDataValid
         );
       },
     },
@@ -326,11 +362,13 @@
 
         const formattedExperiences = this.formatEntries(this.experiences);
         const formattedEducations = this.formatEntries(this.educations);
+        const formattedCourses = this.formatEntries(this.courses);
 
         const resumeDataWithFormattedDates = {
           ...this.resumeData,
           experiences: formattedExperiences,
-          educations: formattedEducations
+          educations: formattedEducations,
+          courses: formattedCourses
         };
 
         try {
@@ -364,6 +402,8 @@
         this.experiences = [];
         this.educationData.forEach(item => item.value = '');
         this.educations = [];
+        this.courseData.forEach(item => item.value = '');
+        this.courses = [];
       },
   },
 }
