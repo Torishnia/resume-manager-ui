@@ -42,6 +42,7 @@
 
   textarea {
     padding: 5px 10px;
+    height: 120px;
     font-size: 16px;
     font-weight: 500;
     border: 1px solid #2e3c51;
