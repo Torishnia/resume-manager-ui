@@ -19,20 +19,45 @@
         </div>
       </div>
 
-      <div class="contact-info" v-if="resume.contact?.length > 0">
+      <div class="contact-info">
         <HeaderIcon title="Contacts" :icon="['fas', 'id-card']" />
 
         <div class="contact-items">
-          <div class="contact-item" v-for="contact in contactList" :key="contact.key">
-            <font-awesome-icon :icon="[contact.iconPrefix, contact.icon]" />
+          <div v-if="!hasContactData" style="text-align: center;">
+            No data.
+          </div>
 
-            <a v-if="contact.hasOwnProperty('url')" :href="contact.url" target="_blank">
-              {{ contact.url }}
+          <div class="contact-item" v-if="resume.contact.phone">
+            <font-awesome-icon :icon="['fas', 'phone']" />
+            <span>{{ resume.contact.phone }}</span>&nbsp;
+            <font-awesome-icon style="margin-right: 5px;" :icon="['fab', 'telegram']" />
+            <font-awesome-icon :icon="['fab', 'viber']" />
+          </div>
+
+          <div class="contact-item" v-if="resume.contact.email">
+            <font-awesome-icon :icon="['fas', 'envelope']" />
+            <span>{{ resume.contact.email }}</span>
+          </div>
+
+          <div class="contact-item" v-if="resume.contact.linkedInURL">
+            <font-awesome-icon :icon="['fab', 'linkedin']" />
+            <a :href="resume.contact.linkedInURL" target="_blank">
+              {{ resume.contact.linkedInURL }}
             </a>
+          </div>
 
-            <span v-else-if="contact.hasOwnProperty('value')">{{ contact.value }}</span>
-            <font-awesome-icon v-if="contact.key === 'phone'" style="margin-right: 5px;" :icon="['fab', 'telegram']" />
-            <font-awesome-icon v-if="contact.key === 'phone'" :icon="['fab', 'viber']" />
+          <div class="contact-item" v-if="resume.contact.telegramURL">
+            <font-awesome-icon :icon="['fab', 'telegram']" />
+            <a :href="resume.contact.telegramURL" target="_blank">
+              {{ resume.contact.telegramURL }}
+            </a>
+          </div>
+
+          <div class="contact-item" v-if="resume.contact.gitHubURL">
+            <font-awesome-icon :icon="['fab', 'github']" />
+            <a :href="resume.contact.gitHubURL" target="_blank">
+              {{ resume.contact.gitHubURL }}
+            </a>
           </div>
         </div>
 
@@ -156,7 +181,6 @@
       return {
         loading: true,
         resume: {},
-        contactList: [],
       };
     },
     components: { 
@@ -194,55 +218,19 @@
           'left-part': true,
           'centered-left-part': !this.hasRightContent
         };
-      }
+      },
+      hasContactData() {
+        return (
+          this.resume.contact && (
+            this.resume.contact.phone 
+            || this.resume.contact.email 
+            || this.resume.contact.linkedInURL 
+            || this.resume.contact.telegramURL 
+            || this.resume.contact.gitHubURL
+          )
+        );
+      },
     },
-    watch: {
-      resume: {
-        handler() {
-          this.populateContactList();
-        },
-        deep: true,
-        immediate: true
-      }
-    },
-    methods: {
-      populateContactList() {
-        if (this.resume.contact) {
-          this.contactList = [
-            {
-              key: 'phone',
-              icon: 'phone',
-              iconPrefix: 'fa',
-              value: this.resume.contact.phone
-            },
-            {
-              key: 'email',
-              icon: 'envelope',
-              iconPrefix: 'fa',
-              value: this.resume.contact.email
-            },
-            {
-              key: 'linkedInURL',
-              icon: 'linkedin',
-              iconPrefix: 'fab',
-              url: this.resume.contact.linkedInURL
-            },
-            {
-              key: 'telegramURL',
-              icon: 'telegram',
-              iconPrefix: 'fab',
-              url: this.resume.contact.telegramURL
-            },
-            {
-              key: 'gitHubURL',
-              icon: 'github',
-              iconPrefix: 'fab',
-              url: this.resume.contact.gitHubURL
-            }
-          ];
-        }
-      }
-    }
   }
 </script>
 
