@@ -458,6 +458,7 @@
 
 <style scoped>
   .container {
+    margin-top: 50px;
     padding: 15px;
   }
 
@@ -504,7 +505,7 @@
 
   @media screen and (min-width: 426px) {
     .container {
-      margin: 0 auto;
+      margin: 120px auto 0;
       width: 340px;
     }
   }

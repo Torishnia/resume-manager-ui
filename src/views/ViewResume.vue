@@ -236,7 +236,7 @@
 
 <style scoped>
   .wrapper {
-    margin: 40px 15px;
+    margin: 100px 15px 40px;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -351,7 +351,7 @@
 
   @media screen and (min-width: 768px) {
     .wrapper {
-      margin: 70px auto;
+      margin: 150px auto 70px;
       flex-direction: row;
       width: 738px;
     }

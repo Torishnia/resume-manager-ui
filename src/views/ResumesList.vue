@@ -48,8 +48,7 @@
         const dateObject = new Date(dateString);
         const year = dateObject.getFullYear();
         const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
-        const day = dateObject.getDate().toString().padStart(2, '0');
-        return `${year}.${month}.${day}`;
+        return `${year}.${month}`;
       },
       viewResume(id) {
         this.$router.push({ name: 'view', params: { id } })
@@ -75,18 +74,22 @@
 
 <style scoped>
   .container {
-    margin: 30px auto;
+    margin: 100px auto;
     cursor: pointer;
   }
 
   .resume {
     margin-bottom: 30px;
     padding: 8px;
-    height: 80px;
     list-style: none;
-    background-color: #2e3c51;
     border-radius: 10px;
-    border: 1px solid green;
+    border: 2px solid #2e3c51;
+    box-sizing: content-box;
+    overflow-wrap: anywhere;
+  }
+
+  .resume:hover {
+    border-color: #f7d201;
   }
 
   .resume-group {
@@ -121,7 +124,7 @@
 
   .resume-position {
     margin: 10px 30px;
-    color: #f4f2e7
+    color: #2e3c51
   }
 
   .no-data {
@@ -133,7 +136,7 @@
 
   @media screen and (min-width: 426px) {
     .container {
-      margin: 80px auto;
+      margin: 150px auto;
       width: 330px;
     }
   }
