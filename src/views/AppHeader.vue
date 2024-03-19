@@ -62,12 +62,16 @@
 
 <style scoped>
   .container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     padding: 5px 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 40px;
-    background-color: #b47f55;
+    background-color: #b47f55d6;
   }
 
   h1 {
@@ -89,9 +93,12 @@
     text-decoration: none;
   }
 
+  nav a:hover {
+    color: #f7d201;
+  }
+
   nav .router-link-exact-active {
-    color: #2e3c51;
-    text-decoration: underline;
+    color: #f7d201;
   }
 
   @media screen and (min-width: 426px) {
