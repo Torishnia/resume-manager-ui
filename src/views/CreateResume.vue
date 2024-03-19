@@ -67,20 +67,26 @@
 
     <ContentWrapper title="Skills">
       <CustomInput
-        inputId="skills"
-        inputType="text"
-        inputName="skills"
-        inputPlaceholder="Add tag and press Enter"
-        :inputLength=64
-        v-model="newSkill"
-        @keydown.enter.prevent="addSkill"
+        v-for="(input, index) in skillData"
+        :key="index"
+        :inputId="input.inputId"
+        :inputType="input.inputType"
+        :inputName="input.inputName"
+        :inputPlaceholder="input.inputPlaceholder"
+        :inputLength="input.inputLength"
+        :options="input.options"
+        v-model="input.value"
+        :isValid="isButtonTouched ? input.validation.isValid : true"
+        :validationErrorMessage="isButtonTouched ? input.validation.errorMessage : ''"
+        @keydown.enter.prevent="addEntry(this.skillData, this.skills)"
       />
+
       <span
         class="tag"
         v-for="(skill, index) in skills"
         :key="index"
       >
-        {{ skill }}
+        {{ skill.name }}
         <CustomIconRemove
           arrayName="skills"
           :index="index"
@@ -210,7 +216,8 @@
     mainData, 
     educationData, 
     courseData, 
-    languageData 
+    languageData, 
+    skillData,
   } from '@/mockData';
   import { validateInput, validateData, VALIDATION_TYPE } from '@/validation';
 
@@ -220,10 +227,11 @@
       return {
         mainData,
         contactData,
+        languageData,
+        skillData,
         experienceData,
         educationData,
         courseData,
-        languageData,
         interests: '',
         companyDescription: '',
         contact: {
@@ -233,12 +241,11 @@
           telegramURL: '',
           gitHubURL: '',
         },
+        languages: [],
         skills: [],
-        newSkill: '',
         experiences: [],
         educations: [],
         courses: [],
-        languages: [],
         isButtonTouched: false,
       };
     },
@@ -336,12 +343,6 @@
       },
     },
     methods: {
-      addSkill() {
-        if (this.newSkill.trim() !== '') {
-          this.skills.push(this.newSkill.trim());
-          this.newSkill = '';
-        }
-      },
       addEntry(fieldsData, entriesArray) {
         const newEntry = {};
         let fieldFilled = false;
@@ -416,11 +417,11 @@
 
         try {
           const response = await fetch('https://resume-manager-api-git-main-torishnia.vercel.app/resumes/create', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(resumeDataWithFormattedDates),
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(resumeDataWithFormattedDates),
           });
 
           if (!response.ok) throw new Error('Error creating resume');

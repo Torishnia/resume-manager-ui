@@ -207,10 +207,10 @@
     computed: {
       hasRightContent() {
         return (
-          this.resume.experiences.length > 0 ||
-          this.resume.educations.length > 0 ||
-          this.resume.courses.length > 0 ||
-          this.resume.interests.length > 0
+          this.resume.experiences?.length > 0 ||
+          this.resume.educations?.length > 0 ||
+          this.resume.courses?.length > 0 ||
+          this.resume.interests?.length > 0
         );
       },
       leftPartClasses() {

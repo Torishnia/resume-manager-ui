@@ -135,6 +135,21 @@ export const contactData = [
   },
 ];
 
+export const skillData = [
+  {
+    inputId: 'name',
+    inputType: 'text',
+    inputName: 'name',
+    inputPlaceholder: "Add tag and press Enter",
+    inputLength: 64,
+    value: '',
+    validation: {
+      isValid: true,
+      errorMessage: '',
+    },
+  }
+];
+
 export const experienceData = [
   {
     inputId: 'companyName',
