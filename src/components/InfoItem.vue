@@ -3,7 +3,10 @@
     <div>
       <h3>{{ title }}</h3>
       <span class="item-subtitle">{{ subtitle }}</span>
-      <p class="item-details">{{ details }}</p>
+      <p class="item-details" v-if="!isLink">{{ details }}</p>
+      <p class="item-details" v-else>
+        <a :href="details" target="_blank">{{ details }}</a>
+      </p>
       <p class="item-description">{{ description }}</p>
     </div>
     <div v-if="hasStartDate || hasEndDate">
@@ -22,6 +25,7 @@
       description: String,
       startDate: String,
       endDate: String,
+      isLink: Boolean,
     },
     computed: {
       hasStartDate() {
@@ -68,6 +72,16 @@
   .item-details {
     font-size: 14px;
     font-weight: 700;
+  }
+
+  .item-details a {
+    color: #023d8c;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .item-details a:hover {
+    color: #1964c9;
   }
 
   .item-description {

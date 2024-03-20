@@ -121,6 +121,7 @@
           :details="course.courseResourse"
           :startDate="course.startDate"
           :endDate="course.endDate"
+          :isLink="true"
         />
       </div>
 
